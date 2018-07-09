@@ -1,6 +1,5 @@
 import React from 'react'
 import randombytes from 'randombytes'
-import pump from 'pump'
 import through from 'through2'
 import path from 'path'
 import xhr from 'xhr'
@@ -106,7 +105,6 @@ export default class SyncComponent extends React.Component {
   render () {
     var self = this
     var {message, status, targets, wifis, files} = this.state
-    var disabled = Object.keys(self.streams).length > 0
 
     return (
         <ul>

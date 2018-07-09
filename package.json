@@ -2,8 +2,9 @@
   "name": "mapeo-components",
   "version": "1.0.0",
   "description": "frontend react components for mapeo",
-  "main": "index.js",
+  "main": "es5/index.js",
   "scripts": {
+    "build:es5": "rimraf es5 && babel src/ --source-maps -d es5/",
     "test": "node test.js"
   },
   "repository": {
@@ -15,5 +16,12 @@
   "bugs": {
     "url": "https://github.com/digidem/mapeo-components/issues"
   },
-  "homepage": "https://github.com/digidem/mapeo-components#readme"
+  "homepage": "https://github.com/digidem/mapeo-components#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "babel-cli": "^6.18.0",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-react": "^6.24.1",
+    "rimraf": "^2.6.2"
+  }
 }

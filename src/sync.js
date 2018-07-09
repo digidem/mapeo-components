@@ -6,7 +6,6 @@ import xhr from 'xhr'
 import querystring from 'querystring'
 import split2 from 'split2'
 import pump from 'pump'
-import {remote} from 'electron'
 import hyperquest from 'hyperquest'
 
 function announce (server, cb) {

@@ -1,0 +1,19 @@
+{
+  "name": "mapeo-components",
+  "version": "1.0.0",
+  "description": "frontend react components for mapeo",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/digidem/mapeo-components.git"
+  },
+  "author": "Karissa McKelvey",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/digidem/mapeo-components/issues"
+  },
+  "homepage": "https://github.com/digidem/mapeo-components#readme"
+}

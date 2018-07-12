@@ -1,1 +1,1 @@
-export {SyncComponent} from './sync'
+export {default} from './sync'

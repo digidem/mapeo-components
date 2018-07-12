@@ -36,13 +36,16 @@ function start (server, target) {
   return pump(hq, split2())
 }
 
+function Target (target) {
+  target.type = target.name ? 'wifi' : 'file'
+  return target
+}
+
 export default class SyncComponent extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      targets: [],
-      wifis: {},
-      files: {}
+      targets: {}
     }
     this.streams = {}
   }
@@ -50,7 +53,8 @@ export default class SyncComponent extends React.Component {
   replicate (target) {
     var self = this
     if (!target) return
-    var stream = start(this.props.server, target)
+    var server = this.props.server
+    var stream = start(server, target)
     var id = randombytes(16).toString('hex')
     this.streams[id] = stream
     stream.on('data', function (data) {
@@ -60,13 +64,11 @@ export default class SyncComponent extends React.Component {
         console.error(err)
         return
       }
-      var status = row.topic
-      var message = messages[status] || row.message
-      // TODO: this is clunky, improve status rendering via external module?
-      var msg = { status, message, target }
-      if (target.name) self.state.wifis[target.name] = msg
-      if (target.filename) self.state.files[target.filename] = msg
-      if (status !== 'replication-progress') self.setState({wifis: self.state.wifis, files: self.state.files})
+      var t = Target(target)
+      t.status = row.topic
+      t.message = self.props.messages[row.topic] || row.message
+      self.state.targets[target.name] = t
+      if (status !== 'replication-progress') self.setState({statuses: self.state.statuses})
     })
 
     stream.on('error', function (err) {
@@ -97,45 +99,50 @@ export default class SyncComponent extends React.Component {
     getTargets(this.props.server, function (err, targets) {
       if (err) return console.error(err)
       targets = JSON.parse(targets)
-      self.setState({targets})
+      targets.forEach(function (t) {
+        var old = self.state.targets[t.name] || {}
+        self.state.targets[t.name] = Object.assign(old, t)
+
+      })
+      self.setState({targets: self.state.targets})
     })
   }
 
   render () {
     var self = this
-    var {message, status, targets, wifis, files} = this.state
+    var {message, targets} = this.state
+    const {filename, onClose} = this.props
+    if (filename) {
+      var name = path.basename(filename)
+      this.replicate({filename, name})
+    }
 
     return (
+      <div>
+        {Object.keys(targets).length === 0
+          ? <div className='subtitle'>Searching for devices&hellip;</div>
+          : <div className='subtitle'>Available Devices</div>
+        }
         <ul>
-          {targets.map(function (t) {
+          {Object.keys(targets).map(function (key) {
+            var t = targets[key]
             if (t.name === 'localhost') return
             return (
-              <div className='target' key={t.name}>
+              <li className='row' key={t.name}>
                 <div className='target'>
                   <span className='name'>{t.name}</span>
-                  <span className='info'>via WiFi</span>
+                  <span className='info'>via {t.type}</span>
                 </div>
-                {wifis[t.name] ? <h3>{wifis[t.name].message}</h3> :
-                  <div className='sync-button' onClick={self.replicate.bind(self, t)}>
+                {t.status ? <h3>{t.message}</h3> :
+                  <button className='sync-button' onClick={self.replicate.bind(self, t)}>
                     arrow
-                  </div >
+                  </button>
                 }
-              </div>
-            )
-          })}
-          {Object.keys(files).map(function (k) {
-            var t = files[k]
-            return (
-              <div key={t.target.filename}>
-                <div className='target'>
-                  <span className='name'>{path.basename(t.target.filename)}</span>
-                  <span className='info'>via File</span>
-                </div>
-                <h3>{t.message}</h3>
-              </div >
+              </li>
             )
           })}
         </ul>
+      </div>
     )
   }
 }

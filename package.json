@@ -1,6 +1,6 @@
 {
   "name": "mapeo-components",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "frontend react components for mapeo",
   "main": "es5/index.js",
   "scripts": {

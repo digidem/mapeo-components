@@ -99,10 +99,13 @@ export default class SyncComponent extends React.Component {
     getTargets(this.props.server, function (err, targets) {
       if (err) return console.error(err)
       targets = JSON.parse(targets)
+      Object.keys(self.state.targets).forEach(function (name) {
+        var match = targets.filter((t) => t.name === name).length
+        if (!match) delete self.state.targets[name]
+      })
       targets.forEach(function (t) {
         var old = self.state.targets[t.name] || {}
-        self.state.targets[t.name] = Object.assign(old, t)
-
+        self.state.targets[t.name] = Target(Object.assign(old, t))
       })
       self.setState({targets: self.state.targets})
     })

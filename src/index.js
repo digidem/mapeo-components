@@ -1,1 +1,1 @@
-export {default} from './sync'
+export * from './FormattedData'

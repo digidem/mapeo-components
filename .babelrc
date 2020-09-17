@@ -1,3 +1,33 @@
+// This file is formatted as JSON5 https://github.com/json5/json5
 {
-  "presets": ["react", "env"]
+  sourceType: 'unambiguous',
+  presets: [
+    // Transforms JSX
+    '@babel/preset-react',
+    // Transforms ES6 code and import/export statements
+    [
+      '@babel/preset-env',
+      {
+        targets: {
+          electron: '9.0.0'
+        },
+        // Only use polyfills necessary for target env
+        useBuiltIns: 'usage',
+        corejs: 3,
+        shippedProposals: true,
+        modules: false
+      }
+    ],
+    '@babel/flow'
+  ],
+  plugins: [
+    // Allows directly declaring props and methods on a class instead of
+    // binding them to `this` in the constructor
+    '@babel/plugin-proposal-class-properties',
+    // Allows simpler defineMessages with react-intl
+    // https://github.com/akameco/babel-plugin-react-intl-auto
+    ['react-intl-auto', { filebase: true, removePrefix: 'src' }],
+    // Reduces bundle size by sharing babel helpers between files
+    ['@babel/plugin-transform-runtime', { corejs: 3 }]
+  ]
 }
